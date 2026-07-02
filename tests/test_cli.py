@@ -146,6 +146,20 @@ class CliTests(unittest.TestCase):
         self.assertEqual(payload["branch_count"], 4)
         self.assertEqual(payload["error_count"], 0)
 
+    def test_run_pipeline_command_writes_preprocessing_and_fusion_package(self) -> None:
+        output_dir = Path("test-output") / f"cli-pipeline-{uuid.uuid4().hex}"
+
+        completed = run_cli("run-pipeline", "--output-dir", str(output_dir))
+
+        payload = json.loads(completed.stdout)
+        report = json.loads((output_dir / "pipeline_report.json").read_text(encoding="utf-8"))
+
+        self.assertEqual(payload["output_dir"], str(output_dir))
+        self.assertTrue(payload["dry_run_only"])
+        self.assertFalse(payload["data_downloaded"])
+        self.assertEqual(report["branch_count"], 4)
+        self.assertTrue((output_dir / "artifacts" / "pet-mr-fusion" / "pet_mr_fusion_planning.json").exists())
+
     def test_cloud_run_command_writes_project_package_with_sample_manifests(self) -> None:
         output_dir = Path("test-output") / f"cli-cloud-run-{uuid.uuid4().hex}"
 

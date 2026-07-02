@@ -48,6 +48,14 @@ python -m brainfusion_agents cloud-run --output-dir outputs/project-dry-run
 
 `cloud-run` automatically uses the included sample manifests when `examples/manifests/` exists. Pass `--no-sample-manifests` to generate the same package shape with manifest blockers instead.
 
+To run the medical imaging preprocessing and fusion pipeline:
+
+```bash
+python -m brainfusion_agents run-pipeline --output-dir outputs/pipeline-run
+```
+
+The pipeline output contains `pipeline_report.json` plus task-level artifacts for PET/MR fusion planning, WSI tissue/patch/embedding planning, CT metadata/feature planning, and CT/WSI pairing-gate routing.
+
 The output directory contains:
 
 - `manifest.json`

@@ -22,6 +22,14 @@ from .package_validation import (
     ProjectPackageValidationResult,
     validate_project_package,
 )
+from .pipeline import (
+    MaterializedPipelineRun,
+    PipelineBranchResult,
+    PipelineRunResult,
+    PipelineTaskResult,
+    build_pipeline_run,
+    materialize_pipeline_run,
+)
 from .plans import WorkflowPlan, build_workflow_plan
 from .project_status import (
     ProjectBranchStatus,
@@ -65,6 +73,10 @@ __all__ = [
     "PetMrReadinessReport",
     "ProjectPackageValidationFinding",
     "ProjectPackageValidationResult",
+    "MaterializedPipelineRun",
+    "PipelineBranchResult",
+    "PipelineRunResult",
+    "PipelineTaskResult",
     "ProjectBranchStatus",
     "ProjectStatusReport",
     "QCResult",
@@ -76,12 +88,14 @@ __all__ = [
     "build_ct_readiness_report",
     "build_pet_mr_readiness_report",
     "build_project_status_report",
+    "build_pipeline_run",
     "build_wsi_readiness_report",
     "build_workflow_plan",
     "case_selection_manifest_template",
     "ct_manifest_template",
     "materialize_dry_run_evidence_bundle",
     "materialize_project_dry_run",
+    "materialize_pipeline_run",
     "pairing_manifest_template",
     "validate_case_selection_manifest",
     "validate_ct_manifest",

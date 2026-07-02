@@ -15,6 +15,7 @@ from .materialize import materialize_dry_run_evidence_bundle
 from .pairing import PairingEvidence, evaluate_pairing_gate
 from .pairing_manifest import pairing_manifest_template, validate_pairing_manifest
 from .package_validation import validate_project_package
+from .pipeline import materialize_pipeline_run
 from .plans import build_workflow_plan
 from .project_status import build_project_status_report
 from .project_run import materialize_project_dry_run
@@ -186,6 +187,23 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate_project.add_argument("--package-dir", required=True)
     validate_project.set_defaults(func=_validate_project_package)
+
+    run_pipeline = subparsers.add_parser(
+        "run-pipeline",
+        help="Run the medical imaging preprocessing and fusion dry-run pipeline.",
+    )
+    run_pipeline.add_argument("--registry", default=str(DEFAULT_REGISTRY))
+    run_pipeline.add_argument("--output-dir", required=True)
+    run_pipeline.add_argument("--pet-mr-manifest")
+    run_pipeline.add_argument("--wsi-manifest")
+    run_pipeline.add_argument("--ct-manifest")
+    run_pipeline.add_argument("--pairing-manifest")
+    run_pipeline.add_argument(
+        "--no-sample-manifests",
+        action="store_true",
+        help="Do not auto-use included examples/manifests sample files.",
+    )
+    run_pipeline.set_defaults(func=_run_pipeline)
 
     route = subparsers.add_parser("route", help="Route a single modality availability case.")
     route.add_argument("--modalities", nargs="+", required=True)
@@ -359,6 +377,19 @@ def _cloud_run(args: argparse.Namespace) -> dict[str, Any]:
 
 def _validate_project_package(args: argparse.Namespace) -> dict[str, Any]:
     return validate_project_package(args.package_dir).to_dict()
+
+
+def _run_pipeline(args: argparse.Namespace) -> dict[str, Any]:
+    registry = _load_registry(args.registry)
+    manifests = _cloud_sample_manifests(use_samples=not args.no_sample_manifests)
+    return materialize_pipeline_run(
+        registry,
+        args.output_dir,
+        pet_mr_manifest=args.pet_mr_manifest or manifests["pet_mr_manifest"],
+        wsi_manifest=args.wsi_manifest or manifests["wsi_manifest"],
+        ct_manifest=args.ct_manifest or manifests["ct_manifest"],
+        pairing_manifest=args.pairing_manifest or manifests["pairing_manifest"],
+    ).to_dict()
 
 
 def _cloud_sample_manifests(*, use_samples: bool) -> dict[str, str | None]:

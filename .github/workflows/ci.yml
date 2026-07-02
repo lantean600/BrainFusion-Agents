@@ -35,6 +35,14 @@ jobs:
           test -f test-output/ci-cloud-run/project_status.json
           python -m brainfusion_agents validate-project-package --package-dir test-output/ci-cloud-run
 
+      - name: Run preprocessing and fusion pipeline smoke test
+        run: |
+          export PYTHONPATH=src
+          python -m brainfusion_agents run-pipeline --output-dir test-output/ci-pipeline
+          test -f test-output/ci-pipeline/manifest.json
+          test -f test-output/ci-pipeline/pipeline_report.json
+          test -f test-output/ci-pipeline/artifacts/pet-mr-fusion/pet_mr_fusion_planning.json
+
       - name: Enforce no-download metadata boundary
         run: |
           python - <<'PY'

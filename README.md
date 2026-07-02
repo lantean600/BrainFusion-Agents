@@ -58,6 +58,7 @@ It provides:
 - executable workflow planning from dataset IDs, including QC gates and expected artifacts;
 - dry-run evidence bundle generation for planned artifacts and non-claim-supporting traces;
 - local materialization of dry-run evidence packages;
+- executable preprocessing/fusion pipeline dry runs for PET/MR, WSI, CT, and CT/WSI pairing;
 - CT-pathology pairing gate evaluation;
 - agent trace validation for main-conclusion and extension-experiment claims;
 - project-level cloud dry-run status reporting;
@@ -133,6 +134,15 @@ Write a project-level dry-run evidence package:
 $env:PYTHONPATH='src'
 python -m brainfusion_agents cloud-run --output-dir outputs/project-dry-run
 ```
+
+Run the preprocessing and fusion pipeline:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m brainfusion_agents run-pipeline --output-dir outputs/pipeline-run
+```
+
+This writes `pipeline_report.json` plus task-level artifacts for PET/MR fusion, WSI preprocessing, CT preprocessing, and CT/WSI pairing audit.
 
 Validate a generated project dry-run package:
 
