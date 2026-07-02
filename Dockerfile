@@ -9,4 +9,4 @@ COPY docs ./docs
 COPY examples ./examples
 COPY src ./src
 
-CMD ["python", "-m", "brainfusion_agents", "cloud-run"]
+CMD ["python", "-m", "brainfusion_agents", "cloud-job"]

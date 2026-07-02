@@ -7,6 +7,7 @@ The implementation kernel turns the research design into testable workflow behav
 | Interface | Module | Responsibility |
 | --- | --- | --- |
 | `audit_dataset_registry` | `brainfusion_agents.audit` | Check registry records against no-download, PET/MR mainline, source URL, and CT-pathology pairing invariants. |
+| `CloudJobResult` / `run_cloud_job` | `brainfusion_agents.cloud_job` | Run the default cloud deliverable job and write project evidence, pipeline reports, validation results, and `job_summary.json`. |
 | `ct_manifest_template` / `validate_ct_manifest` | `brainfusion_agents.ct_manifest` | Create and validate CT prototype manifests without local DICOM, CT, annotation, or feature paths. |
 | `DatasetRegistry` | `brainfusion_agents.datasets` | Load and query dataset metadata links, access status, modality, branch, and pairing status. |
 | `case_selection_manifest_template` / `validate_case_selection_manifest` | `brainfusion_agents.manifest` | Create and validate PET/MR case selection manifests without local image paths. |
@@ -310,6 +311,27 @@ python -m brainfusion_agents run-pipeline --output-dir outputs/pipeline-run
 ```
 
 The pipeline remains metadata-only: it uses registry links and manifests, writes source-ID based plans, and keeps `data_downloaded=false`.
+
+## Cloud Job
+
+`run_cloud_job` is the cloud platform entrypoint for the current deliverable. It runs both project materialization and pipeline materialization, validates the project package, and writes a root `job_summary.json`.
+
+Example:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m brainfusion_agents cloud-job --output-dir outputs/cloud-job
+```
+
+The output layout is:
+
+- `job_summary.json`
+- `project-dry-run/manifest.json`
+- `project-dry-run/project_status.json`
+- `pipeline-run/manifest.json`
+- `pipeline-run/pipeline_report.json`
+
+This is still a no-download job. A successful run proves that the repository can execute on cloud compute and produce collectable planning artifacts; it does not claim trained performance or paired patient-level CT/WSI fusion.
 
 ## Verification
 

@@ -17,4 +17,4 @@ brainfusion-agents = "brainfusion_agents.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-brainfusion_agents = ["data/*.json"]
+brainfusion_agents = ["data/*.json", "data/manifests/*.json"]

@@ -1,0 +1,11 @@
+{
+  "manifest_type": "ct_pathology_pairing_audit",
+  "description": "Intentional no-download pairing audit sample. It does not pass the fusion gate because no real patient-level paired records have been verified.",
+  "source_datasets": ["tcia", "tcga-gdc"],
+  "identifier_fields": ["submitter_id"],
+  "paired_patient_count": 0,
+  "paired_lesion_count": null,
+  "timing_assumption": "",
+  "endpoint_available": false,
+  "evidence": []
+}

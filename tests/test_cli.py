@@ -179,6 +179,44 @@ class CliTests(unittest.TestCase):
         status = json.loads((output_dir / "project_status.json").read_text(encoding="utf-8"))
         self.assertTrue(status["pet_mr_mvp_metadata_ready"])
 
+    def test_cloud_job_command_writes_project_pipeline_and_summary_outputs(self) -> None:
+        output_dir = Path("test-output") / f"cli-cloud-job-{uuid.uuid4().hex}"
+
+        completed = run_cli(
+            "cloud-job",
+            "--output-dir",
+            str(output_dir),
+        )
+
+        payload = json.loads(completed.stdout)
+        summary = json.loads((output_dir / "job_summary.json").read_text(encoding="utf-8"))
+
+        self.assertEqual(payload["output_dir"], str(output_dir))
+        self.assertTrue(payload["cloud_runnable"])
+        self.assertTrue(payload["project_package_validation"]["passed"])
+        self.assertTrue(summary["cloud_runnable"])
+        self.assertEqual(summary["pipeline_branch_count"], 4)
+        self.assertTrue((output_dir / "project-dry-run" / "manifest.json").exists())
+        self.assertTrue((output_dir / "pipeline-run" / "pipeline_report.json").exists())
+
+    def test_cloud_job_command_finds_sample_manifests_outside_repo_root(self) -> None:
+        cwd = PROJECT_ROOT / "test-output" / f"cloud-job-outside-repo-{uuid.uuid4().hex}"
+        output_dir = cwd / "cloud-output"
+        cwd.mkdir(parents=True, exist_ok=True)
+
+        completed = run_cli(
+            "cloud-job",
+            "--output-dir",
+            str(output_dir),
+            cwd=cwd,
+        )
+
+        payload = json.loads(completed.stdout)
+        summary = json.loads((output_dir / "job_summary.json").read_text(encoding="utf-8"))
+
+        self.assertTrue(payload["cloud_runnable"])
+        self.assertEqual(summary["ready_pipeline_branches"], ["pet-mr-fusion", "wsi-preprocessing", "ct-preprocessing"])
+
     def test_cloud_run_command_finds_sample_manifests_outside_repo_root(self) -> None:
         cwd = PROJECT_ROOT / "test-output" / f"cloud-run-outside-repo-{uuid.uuid4().hex}"
         output_dir = cwd / "cloud-output"

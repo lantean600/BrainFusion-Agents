@@ -1,6 +1,7 @@
 """BrainFusion-Agents workflow kernel."""
 
 from .audit import RegistryAuditFinding, RegistryAuditResult, audit_dataset_registry
+from .cloud_job import CloudJobResult, run_cloud_job
 from .ct_manifest import ct_manifest_template, validate_ct_manifest
 from .datasets import DatasetRecord, DatasetRegistry
 from .evidence import DryRunEvidenceBundle, build_dry_run_evidence_bundle
@@ -55,6 +56,7 @@ from .wsi_manifest import validate_wsi_manifest, wsi_manifest_template
 __all__ = [
     "AgentTrace",
     "BranchReadinessReport",
+    "CloudJobResult",
     "ConclusionSupport",
     "DatasetRecord",
     "DatasetRegistry",
@@ -97,6 +99,7 @@ __all__ = [
     "materialize_project_dry_run",
     "materialize_pipeline_run",
     "pairing_manifest_template",
+    "run_cloud_job",
     "validate_case_selection_manifest",
     "validate_ct_manifest",
     "validate_pairing_manifest",

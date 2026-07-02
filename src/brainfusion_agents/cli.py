@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from .audit import audit_dataset_registry
+from .cloud_job import run_cloud_job
 from .ct_manifest import ct_manifest_template, validate_ct_manifest
 from .datasets import DatasetRegistry
 from .evidence import build_dry_run_evidence_bundle
@@ -30,6 +31,7 @@ from .wsi_manifest import validate_wsi_manifest, wsi_manifest_template
 
 DEFAULT_REGISTRY = Path("data/dataset_registry.json")
 DEFAULT_CLOUD_OUTPUT_DIR = Path("outputs/project-dry-run")
+DEFAULT_CLOUD_JOB_OUTPUT_DIR = Path("outputs/cloud-job")
 SAMPLE_MANIFESTS = {
     "pet_mr_manifest": Path("examples/manifests/adni-case-selection.sample.json"),
     "wsi_manifest": Path("examples/manifests/tcga-wsi-preprocessing.sample.json"),
@@ -180,6 +182,23 @@ def build_parser() -> argparse.ArgumentParser:
         help="Do not auto-use included examples/manifests sample files.",
     )
     cloud_run.set_defaults(func=_cloud_run)
+
+    cloud_job = subparsers.add_parser(
+        "cloud-job",
+        help="Run the full cloud dry-run job and write project, pipeline, and summary outputs.",
+    )
+    cloud_job.add_argument("--registry", default=str(DEFAULT_REGISTRY))
+    cloud_job.add_argument("--output-dir", default=str(DEFAULT_CLOUD_JOB_OUTPUT_DIR))
+    cloud_job.add_argument("--pet-mr-manifest")
+    cloud_job.add_argument("--wsi-manifest")
+    cloud_job.add_argument("--ct-manifest")
+    cloud_job.add_argument("--pairing-manifest")
+    cloud_job.add_argument(
+        "--no-sample-manifests",
+        action="store_true",
+        help="Do not auto-use included examples/manifests sample files.",
+    )
+    cloud_job.set_defaults(func=_cloud_job)
 
     validate_project = subparsers.add_parser(
         "validate-project-package",
@@ -375,6 +394,19 @@ def _cloud_run(args: argparse.Namespace) -> dict[str, Any]:
     ).to_dict()
 
 
+def _cloud_job(args: argparse.Namespace) -> dict[str, Any]:
+    registry = _load_registry(args.registry)
+    manifests = _cloud_sample_manifests(use_samples=not args.no_sample_manifests)
+    return run_cloud_job(
+        registry,
+        args.output_dir,
+        pet_mr_manifest=args.pet_mr_manifest or manifests["pet_mr_manifest"],
+        wsi_manifest=args.wsi_manifest or manifests["wsi_manifest"],
+        ct_manifest=args.ct_manifest or manifests["ct_manifest"],
+        pairing_manifest=args.pairing_manifest or manifests["pairing_manifest"],
+    ).to_dict()
+
+
 def _validate_project_package(args: argparse.Namespace) -> dict[str, Any]:
     return validate_project_package(args.package_dir).to_dict()
 
@@ -407,6 +439,9 @@ def _resolve_sample_manifest(path: Path) -> str | None:
     source_root_path = Path(__file__).resolve().parents[2] / path
     if source_root_path.exists():
         return str(source_root_path)
+    packaged_path = Path(__file__).resolve().parent / "data" / "manifests" / path.name
+    if packaged_path.exists():
+        return str(packaged_path)
     return None
 
 

@@ -62,6 +62,7 @@ It provides:
 - CT-pathology pairing gate evaluation;
 - agent trace validation for main-conclusion and extension-experiment claims;
 - project-level cloud dry-run status reporting;
+- one-command cloud job materialization for project evidence, pipeline reports, and summary output;
 - CLI access through `python -m brainfusion_agents`.
 
 No dataset download is performed. The registry keeps source links and access status only.
@@ -70,12 +71,18 @@ The CLI reads `data/dataset_registry.json` when run from the repository root. If
 
 ## Cloud Runnable Dry Run
 
-The current complete runnable version is a metadata-only dry run. It can be installed on a cloud compute platform and used to validate registry rules, workflow routing, manifests, pairing gates, and planned evidence artifacts before medical data is approved.
+The current complete runnable version is a metadata-only dry run. It can be installed on a cloud compute platform and used to validate registry rules, workflow routing, manifests, pairing gates, pipeline task planning, and planned evidence artifacts before medical data is approved.
 
 ```bash
 python -m pip install .
-brainfusion-agents project-status
+brainfusion-agents cloud-job --output-dir outputs/cloud-job
 ```
+
+`cloud-job` is the recommended cloud platform entrypoint. It writes:
+
+- `outputs/cloud-job/job_summary.json`
+- `outputs/cloud-job/project-dry-run/`
+- `outputs/cloud-job/pipeline-run/`
 
 Run the included no-download samples:
 
@@ -94,7 +101,7 @@ docker build -t brainfusion-agents:dry-run .
 docker run --rm brainfusion-agents:dry-run
 ```
 
-The default container command runs the source tree directly with `python -m brainfusion_agents cloud-run` and writes a project dry-run evidence package to `outputs/project-dry-run`.
+The default container command runs the source tree directly with `python -m brainfusion_agents cloud-job` and writes project, pipeline, and summary outputs to `outputs/cloud-job`.
 
 See `docs/cloud-run.md` for the release boundary and data rules.
 
@@ -126,6 +133,13 @@ Build the project-level cloud dry-run status report:
 ```powershell
 $env:PYTHONPATH='src'
 python -m brainfusion_agents project-status
+```
+
+Run the full cloud job:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m brainfusion_agents cloud-job --output-dir outputs/cloud-job
 ```
 
 Write a project-level dry-run evidence package:

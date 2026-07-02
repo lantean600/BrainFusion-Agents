@@ -1,0 +1,22 @@
+{
+  "manifest_type": "ct_prototype",
+  "dataset_id": "lidc-idri",
+  "records": [
+    {
+      "case_id": "LIDC-001",
+      "study_id": "STUDY-001",
+      "series_id": "SERIES-001",
+      "source_record": "lidc:LIDC-001:STUDY-001:SERIES-001",
+      "ct_protocol": "chest-ct",
+      "ct_series_readable": true,
+      "metadata_sufficient": true,
+      "annotation_available": true,
+      "lesion_reference": "nodule-1",
+      "baseline_type": "segmentation",
+      "baseline_status": "planned",
+      "feature_manifest_status": "planned",
+      "qc_status": "needs-human-review",
+      "trace_id": "dry-run:ct:LIDC-001"
+    }
+  ]
+}

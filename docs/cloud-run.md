@@ -12,7 +12,7 @@ This project is currently a metadata-only dry-run kernel. It is suitable for a c
 
 ```bash
 python -m pip install .
-brainfusion-agents project-status
+brainfusion-agents cloud-job --output-dir outputs/cloud-job
 ```
 
 When launched from the repository root, the CLI reads `data/dataset_registry.json`. When launched from another directory after installation, it falls back to the packaged registry copy so cloud jobs do not depend on the current working directory.
@@ -22,7 +22,7 @@ The command should report:
 - `cloud_runnable=true`
 - `dry_run_only=true`
 - `data_downloaded=false`
-- missing manifest blockers until project-specific manifests are supplied
+- a `job_summary.json` path plus project and pipeline output directories
 
 ## Run With Included No-Download Samples
 
@@ -41,6 +41,22 @@ Expected status:
 - No main conclusion or extension experiment is supported in this no-download phase.
 
 To create a collectable cloud job artifact, materialize the project dry run:
+
+```bash
+python -m brainfusion_agents cloud-job --output-dir outputs/cloud-job
+```
+
+`cloud-job` automatically uses the included sample manifests when `examples/manifests/` exists. It writes:
+
+- `outputs/cloud-job/job_summary.json`
+- `outputs/cloud-job/project-dry-run/manifest.json`
+- `outputs/cloud-job/project-dry-run/project_status.json`
+- `outputs/cloud-job/pipeline-run/manifest.json`
+- `outputs/cloud-job/pipeline-run/pipeline_report.json`
+
+Use this as the default command on AutoDL, RunPod, Lambda Labs, Slurm jobs, or a plain cloud VM. Pass `--no-sample-manifests` to generate the same package shape with manifest blockers instead.
+
+To create only the project dry-run package:
 
 ```bash
 python -m brainfusion_agents cloud-run --output-dir outputs/project-dry-run
@@ -67,7 +83,7 @@ The output directory contains:
 Validate the generated package before collecting it:
 
 ```bash
-python -m brainfusion_agents validate-project-package --package-dir outputs/project-dry-run
+python -m brainfusion_agents validate-project-package --package-dir outputs/cloud-job/project-dry-run
 ```
 
 The validator checks that all listed package files exist, every branch has an evidence bundle, no data is marked downloaded, downloads remain blocked, and no dry-run trace claims support for the main conclusion or extension experiment.
@@ -81,7 +97,7 @@ docker build -t brainfusion-agents:dry-run .
 docker run --rm brainfusion-agents:dry-run
 ```
 
-The default container command runs the source tree directly with `python -m brainfusion_agents cloud-run` and writes `outputs/project-dry-run` inside the container. On a cloud platform, mount or collect that directory as the job artifact.
+The default container command runs the source tree directly with `python -m brainfusion_agents cloud-job` and writes `outputs/cloud-job` inside the container. On a cloud platform, mount or collect that directory as the job artifact.
 
 ## Data Boundary
 
