@@ -353,9 +353,18 @@ def _cloud_sample_manifests(*, use_samples: bool) -> dict[str, str | None]:
     if not use_samples:
         return {key: None for key in SAMPLE_MANIFESTS}
     return {
-        key: str(path) if path.exists() else None
+        key: _resolve_sample_manifest(path)
         for key, path in SAMPLE_MANIFESTS.items()
     }
+
+
+def _resolve_sample_manifest(path: Path) -> str | None:
+    if path.exists():
+        return str(path)
+    source_root_path = Path(__file__).resolve().parents[2] / path
+    if source_root_path.exists():
+        return str(source_root_path)
+    return None
 
 
 def _route(args: argparse.Namespace) -> dict[str, Any]:

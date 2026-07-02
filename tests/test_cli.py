@@ -149,6 +149,24 @@ class CliTests(unittest.TestCase):
         status = json.loads((output_dir / "project_status.json").read_text(encoding="utf-8"))
         self.assertTrue(status["pet_mr_mvp_metadata_ready"])
 
+    def test_cloud_run_command_finds_sample_manifests_outside_repo_root(self) -> None:
+        cwd = PROJECT_ROOT / "test-output" / f"cloud-run-outside-repo-{uuid.uuid4().hex}"
+        output_dir = cwd / "cloud-output"
+        cwd.mkdir(parents=True, exist_ok=True)
+
+        completed = run_cli(
+            "cloud-run",
+            "--output-dir",
+            str(output_dir),
+            cwd=cwd,
+        )
+
+        payload = json.loads(completed.stdout)
+        status = json.loads((output_dir / "project_status.json").read_text(encoding="utf-8"))
+
+        self.assertEqual(payload["package_root"], str(output_dir))
+        self.assertTrue(status["pet_mr_mvp_metadata_ready"])
+
     def test_cloud_run_command_can_skip_sample_manifests(self) -> None:
         output_dir = Path("test-output") / f"cli-cloud-run-no-samples-{uuid.uuid4().hex}"
 
