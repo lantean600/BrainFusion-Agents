@@ -134,6 +134,13 @@ $env:PYTHONPATH='src'
 python -m brainfusion_agents cloud-run --output-dir outputs/project-dry-run
 ```
 
+Validate a generated project dry-run package:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m brainfusion_agents validate-project-package --package-dir outputs/project-dry-run
+```
+
 Print a PET/MR case selection manifest template:
 
 ```powershell

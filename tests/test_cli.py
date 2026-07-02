@@ -130,6 +130,22 @@ class CliTests(unittest.TestCase):
         self.assertTrue((output_dir / "project_status.json").exists())
         self.assertEqual(len(payload["branches"]), 4)
 
+    def test_validate_project_package_command_accepts_cloud_run_package(self) -> None:
+        output_dir = Path("test-output") / f"cli-package-validation-{uuid.uuid4().hex}"
+        run_cli("cloud-run", "--output-dir", str(output_dir))
+
+        completed = run_cli(
+            "validate-project-package",
+            "--package-dir",
+            str(output_dir),
+        )
+
+        payload = json.loads(completed.stdout)
+
+        self.assertTrue(payload["passed"])
+        self.assertEqual(payload["branch_count"], 4)
+        self.assertEqual(payload["error_count"], 0)
+
     def test_cloud_run_command_writes_project_package_with_sample_manifests(self) -> None:
         output_dir = Path("test-output") / f"cli-cloud-run-{uuid.uuid4().hex}"
 

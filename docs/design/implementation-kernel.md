@@ -20,6 +20,7 @@ The implementation kernel turns the research design into testable workflow behav
 | `MaterializedEvidencePackage` / `materialize_dry_run_evidence_bundle` | `brainfusion_agents.materialize` | Write a dry-run package containing `manifest.json`, `evidence_bundle.json`, trace files, and planned artifact stubs. |
 | `PairingEvidence` / `evaluate_pairing_gate` | `brainfusion_agents.pairing` | Decide whether CT+WSI evidence passes patient-level or lesion-level pairing requirements. |
 | `MaterializedProjectDryRunPackage` / `materialize_project_dry_run` | `brainfusion_agents.project_run` | Write a project-level dry-run package with status, branch evidence bundles, trace files, and artifact stubs. |
+| `ProjectPackageValidationResult` / `validate_project_package` | `brainfusion_agents.package_validation` | Validate a materialized project dry-run package before collecting it as a cloud job artifact. |
 | `ProjectStatusReport` / `build_project_status_report` | `brainfusion_agents.project_status` | Aggregate registry audit, default workflow plans, optional branch manifests, and pairing audit state into a cloud dry-run status report. |
 | `AgentTrace` / `validate_trace` | `brainfusion_agents.trace` | Validate whether a trace can support the PET/MR main conclusion or an extension experiment. |
 | CLI | `brainfusion_agents.cli` | Expose registry, routing, planning, and pairing gate checks from the command line. |
@@ -281,6 +282,15 @@ python -m brainfusion_agents materialize-project-dry-run --output-dir outputs/pr
 ```
 
 This is the preferred cloud preflight artifact because it gives the scheduler one output directory to persist.
+
+Validate the package:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m brainfusion_agents validate-project-package --package-dir outputs/project-dry-run
+```
+
+The validator checks root manifest/status invariants, branch evidence bundles, listed file existence, no-download flags, and absence of dry-run claim support.
 
 ## Verification
 

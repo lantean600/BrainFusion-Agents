@@ -17,6 +17,11 @@ from .pairing_manifest import (
     pairing_manifest_template,
     validate_pairing_manifest,
 )
+from .package_validation import (
+    ProjectPackageValidationFinding,
+    ProjectPackageValidationResult,
+    validate_project_package,
+)
 from .plans import WorkflowPlan, build_workflow_plan
 from .project_status import (
     ProjectBranchStatus,
@@ -58,6 +63,8 @@ __all__ = [
     "PairingGateResult",
     "PairingManifestValidationResult",
     "PetMrReadinessReport",
+    "ProjectPackageValidationFinding",
+    "ProjectPackageValidationResult",
     "ProjectBranchStatus",
     "ProjectStatusReport",
     "QCResult",
@@ -79,6 +86,7 @@ __all__ = [
     "validate_case_selection_manifest",
     "validate_ct_manifest",
     "validate_pairing_manifest",
+    "validate_project_package",
     "evaluate_pairing_gate",
     "WorkflowRequest",
     "WorkflowRoute",

@@ -56,6 +56,14 @@ The output directory contains:
 - `branches/<branch-id>/evidence/evidence_bundle.json`
 - planned trace and artifact JSON files for each branch
 
+Validate the generated package before collecting it:
+
+```bash
+python -m brainfusion_agents validate-project-package --package-dir outputs/project-dry-run
+```
+
+The validator checks that all listed package files exist, every branch has an evidence bundle, no data is marked downloaded, downloads remain blocked, and no dry-run trace claims support for the main conclusion or extension experiment.
+
 ## Container Entry
 
 Build and run:

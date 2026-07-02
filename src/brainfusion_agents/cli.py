@@ -14,6 +14,7 @@ from .manifest import case_selection_manifest_template, validate_case_selection_
 from .materialize import materialize_dry_run_evidence_bundle
 from .pairing import PairingEvidence, evaluate_pairing_gate
 from .pairing_manifest import pairing_manifest_template, validate_pairing_manifest
+from .package_validation import validate_project_package
 from .plans import build_workflow_plan
 from .project_status import build_project_status_report
 from .project_run import materialize_project_dry_run
@@ -178,6 +179,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="Do not auto-use included examples/manifests sample files.",
     )
     cloud_run.set_defaults(func=_cloud_run)
+
+    validate_project = subparsers.add_parser(
+        "validate-project-package",
+        help="Validate a materialized project dry-run evidence package.",
+    )
+    validate_project.add_argument("--package-dir", required=True)
+    validate_project.set_defaults(func=_validate_project_package)
 
     route = subparsers.add_parser("route", help="Route a single modality availability case.")
     route.add_argument("--modalities", nargs="+", required=True)
@@ -347,6 +355,10 @@ def _cloud_run(args: argparse.Namespace) -> dict[str, Any]:
         args.output_dir,
         **manifests,
     ).to_dict()
+
+
+def _validate_project_package(args: argparse.Namespace) -> dict[str, Any]:
+    return validate_project_package(args.package_dir).to_dict()
 
 
 def _cloud_sample_manifests(*, use_samples: bool) -> dict[str, str | None]:

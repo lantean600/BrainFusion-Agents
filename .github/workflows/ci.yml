@@ -33,6 +33,7 @@ jobs:
           python -m brainfusion_agents cloud-run --output-dir test-output/ci-cloud-run
           test -f test-output/ci-cloud-run/manifest.json
           test -f test-output/ci-cloud-run/project_status.json
+          python -m brainfusion_agents validate-project-package --package-dir test-output/ci-cloud-run
 
       - name: Enforce no-download metadata boundary
         run: |
