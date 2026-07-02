@@ -11,4 +11,4 @@ venv/
 .tmp-test/
 test-output/
 outputs/
-manifests/
+/manifests/

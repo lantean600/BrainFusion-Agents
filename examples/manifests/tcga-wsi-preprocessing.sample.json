@@ -1,0 +1,23 @@
+{
+  "manifest_type": "wsi_preprocessing",
+  "dataset_id": "tcga-gdc-wsi",
+  "records": [
+    {
+      "case_id": "CASE-001",
+      "slide_id": "SLIDE-001",
+      "source_record": "tcga:CASE-001:SLIDE-001",
+      "magnification": "20x",
+      "resolution": "0.5 mpp",
+      "slide_readable": true,
+      "tissue_detection_status": "pass",
+      "artifact_filtering_status": "pass",
+      "stain_normalization_status": "planned",
+      "patch_extraction_status": "planned",
+      "embedding_status": "planned",
+      "patch_count": 0,
+      "embedding_model": "UNI-candidate",
+      "qc_status": "needs-human-review",
+      "trace_id": "dry-run:wsi:SLIDE-001"
+    }
+  ]
+}

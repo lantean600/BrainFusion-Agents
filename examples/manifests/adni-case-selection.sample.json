@@ -1,0 +1,20 @@
+{
+  "manifest_type": "pet_mr_case_selection",
+  "dataset_id": "adni",
+  "records": [
+    {
+      "subject_id": "S001",
+      "session_id": "M00",
+      "diagnosis_label": "MCI",
+      "clinical_timepoint": "baseline",
+      "pet_available": true,
+      "mr_available": true,
+      "pet_tracer": "FDG",
+      "mr_sequence": "T1w",
+      "pet_qc_status": "pass",
+      "mr_qc_status": "pass",
+      "alignment_status": "subject-session",
+      "source_record": "adni:S001:M00"
+    }
+  ]
+}
