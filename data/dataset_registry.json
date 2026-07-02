@@ -1,0 +1,138 @@
+{
+  "datasets": [
+    {
+      "dataset_id": "adni",
+      "name": "ADNI",
+      "modalities": ["PET", "MR"],
+      "branch": "pet-mr-mainline",
+      "role": "primary-development",
+      "access_status": "not-requested",
+      "source_urls": [
+        "https://adni.loni.usc.edu/data-samples/adni-data/",
+        "https://adni.loni.usc.edu/data-samples/adni-data/neuroimaging/pet/",
+        "https://adni.loni.usc.edu/data-samples/adni-data/neuroimaging/mri/"
+      ],
+      "pairing_status": "subject-session-alignment-required",
+      "notes": "Primary PET/MR development dataset. Requires LONI IDA approval before download."
+    },
+    {
+      "dataset_id": "oasis-3",
+      "name": "OASIS-3",
+      "modalities": ["PET", "MR"],
+      "branch": "pet-mr-mainline",
+      "role": "external-validation",
+      "access_status": "not-requested",
+      "source_urls": ["https://www.oasis-brains.org/"],
+      "pairing_status": "subject-session-alignment-required",
+      "notes": "External validation dataset for PET/MR workflow. Requires OASIS/NITRC access approval."
+    },
+    {
+      "dataset_id": "openneuro",
+      "name": "OpenNeuro",
+      "modalities": ["MR"],
+      "branch": "brain-imaging-supplement",
+      "role": "bids-workflow-test",
+      "access_status": "not-requested",
+      "source_urls": ["https://openneuro.org/"],
+      "pairing_status": "not-a-pet-mr-main-dataset",
+      "notes": "Use only for open BIDS/MRI workflow checks unless a specific PET/MR paired dataset is audited."
+    },
+    {
+      "dataset_id": "lidc-idri",
+      "name": "LIDC-IDRI",
+      "modalities": ["CT"],
+      "branch": "ct-prototype",
+      "role": "initial-ct-prototype",
+      "access_status": "not-requested",
+      "source_urls": ["https://www.cancerimagingarchive.net/collection/lidc-idri/"],
+      "pairing_status": "ct-only",
+      "notes": "Initial lung nodule CT segmentation, classification, and QC prototype dataset."
+    },
+    {
+      "dataset_id": "nsclc-radiomics",
+      "name": "NSCLC-Radiomics",
+      "modalities": ["CT"],
+      "branch": "ct-prototype",
+      "role": "cancer-ct-expansion",
+      "access_status": "not-requested",
+      "source_urls": ["https://www.cancerimagingarchive.net/collection/nsclc-radiomics/"],
+      "pairing_status": "candidate-pairing-review",
+      "notes": "Cancer CT expansion candidate; any WSI pairing must be audited separately."
+    },
+    {
+      "dataset_id": "nlst",
+      "name": "NLST via TCIA/IDC",
+      "modalities": ["CT"],
+      "branch": "ct-prototype",
+      "role": "cancer-ct-expansion",
+      "access_status": "not-requested",
+      "source_urls": [
+        "https://www.cancerimagingarchive.net/collection/nlst/",
+        "https://portal.imaging.datacommons.cancer.gov/"
+      ],
+      "pairing_status": "candidate-pairing-review",
+      "notes": "Large lung screening CT expansion candidate."
+    },
+    {
+      "dataset_id": "tcga-gdc-wsi",
+      "name": "TCGA via GDC",
+      "modalities": ["WSI"],
+      "branch": "wsi-preprocessing",
+      "role": "large-scale-wsi",
+      "access_status": "not-requested",
+      "source_urls": ["https://portal.gdc.cancer.gov/"],
+      "pairing_status": "wsi-branch-pairing-audit-required",
+      "notes": "Large-scale WSI preprocessing and pathology foundation model feature extraction source."
+    },
+    {
+      "dataset_id": "camelyon",
+      "name": "CAMELYON16/17",
+      "modalities": ["WSI"],
+      "branch": "wsi-preprocessing",
+      "role": "labeled-wsi-benchmark",
+      "access_status": "not-requested",
+      "source_urls": [
+        "https://camelyon16.grand-challenge.org/",
+        "https://camelyon17.grand-challenge.org/"
+      ],
+      "pairing_status": "benchmark-only",
+      "notes": "Use for WSI QC, tissue detection, and patch/task benchmark evaluation."
+    },
+    {
+      "dataset_id": "panda",
+      "name": "PANDA",
+      "modalities": ["WSI"],
+      "branch": "wsi-preprocessing",
+      "role": "labeled-wsi-benchmark",
+      "access_status": "not-requested",
+      "source_urls": ["https://panda.grand-challenge.org/"],
+      "pairing_status": "benchmark-only",
+      "notes": "Prostate WSI grading benchmark and patch classification reference."
+    },
+    {
+      "dataset_id": "ignite",
+      "name": "IGNITE",
+      "modalities": ["WSI"],
+      "branch": "wsi-preprocessing",
+      "role": "nsclc-pathology-annotation-candidate",
+      "access_status": "not-requested",
+      "source_urls": ["https://arxiv.org/abs/2507.16855"],
+      "pairing_status": "candidate-pairing-review",
+      "notes": "NSCLC pathology ROI/cell/tissue annotation candidate. The access endpoint must be checked from the paper before use."
+    },
+    {
+      "dataset_id": "tcia-tcga-paired-candidates",
+      "name": "TCIA + TCGA/GDC paired cancer cohort candidates",
+      "modalities": ["CT", "WSI"],
+      "branch": "ct-pathology-extension",
+      "role": "pairing-audit-candidate",
+      "access_status": "not-requested",
+      "source_urls": [
+        "https://www.cancerimagingarchive.net/",
+        "https://portal.gdc.cancer.gov/"
+      ],
+      "pairing_status": "unverified",
+      "notes": "Candidate only. Formal fusion requires patient-level or lesion-level pairing evidence."
+    }
+  ]
+}
