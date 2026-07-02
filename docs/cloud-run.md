@@ -53,8 +53,11 @@ python -m brainfusion_agents cloud-job --output-dir outputs/cloud-job
 - `outputs/cloud-job/project-dry-run/project_status.json`
 - `outputs/cloud-job/pipeline-run/manifest.json`
 - `outputs/cloud-job/pipeline-run/pipeline_report.json`
+- `outputs/cloud-job/synthetic-runtime/demo_summary.json`
 
 Use this as the default command on AutoDL, RunPod, Lambda Labs, Slurm jobs, or a plain cloud VM. Pass `--no-sample-manifests` to generate the same package shape with manifest blockers instead.
+
+The `synthetic-runtime/` directory is a real computation smoke test over generated arrays. It writes PET/MR fusion features, CT preprocessing features, and WSI tile/embedding features without downloading or inspecting real medical files.
 
 To create only the project dry-run package:
 
@@ -71,6 +74,12 @@ python -m brainfusion_agents run-pipeline --output-dir outputs/pipeline-run
 ```
 
 The pipeline output contains `pipeline_report.json` plus task-level artifacts for PET/MR fusion planning, WSI tissue/patch/embedding planning, CT metadata/feature planning, and CT/WSI pairing-gate routing.
+
+To run only the synthetic computation smoke test:
+
+```bash
+python -m brainfusion_agents synthetic-demo --output-dir outputs/synthetic-runtime
+```
 
 The output directory contains:
 

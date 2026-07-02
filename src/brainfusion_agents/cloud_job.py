@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from .datasets import DatasetRegistry
+from .demo_runtime import SyntheticRuntimeResult, run_synthetic_runtime_demo
 from .package_validation import ProjectPackageValidationResult, validate_project_package
 from .pipeline import MaterializedPipelineRun, materialize_pipeline_run
 from .project_run import MaterializedProjectDryRunPackage, materialize_project_dry_run
@@ -17,6 +18,7 @@ class CloudJobResult:
     output_dir: Path
     project_package: MaterializedProjectDryRunPackage
     pipeline_run: MaterializedPipelineRun
+    synthetic_runtime: SyntheticRuntimeResult
     project_package_validation: ProjectPackageValidationResult
     summary_path: Path
     files: tuple[Path, ...]
@@ -53,10 +55,12 @@ class CloudJobResult:
             "downloads_blocked": self.downloads_blocked,
             "project_package_dir": str(self.project_package.package_root),
             "pipeline_output_dir": str(self.pipeline_run.output_dir),
+            "synthetic_runtime_dir": str(self.synthetic_runtime.output_dir),
             "summary_path": str(self.summary_path),
             "project_package_validation": self.project_package_validation.to_dict(),
             "project_branch_count": len(self.project_package.branches),
             "pipeline_branch_count": self.pipeline_run.report.branch_count,
+            "synthetic_runtime_summary": self.synthetic_runtime.summary,
             "ready_pipeline_branches": ready_branches,
             "blocked_pipeline_branches": blocked_branches,
             "files": [str(path) for path in self.files],
@@ -91,17 +95,19 @@ def run_cloud_job(
         ct_manifest=ct_manifest,
         pairing_manifest=pairing_manifest,
     )
+    synthetic_runtime = run_synthetic_runtime_demo(root / "synthetic-runtime")
     validation = validate_project_package(project_package.package_root)
 
     summary_path = root / "job_summary.json"
-    summary = _summary_payload(root, project_package, pipeline_run, validation)
+    summary = _summary_payload(root, project_package, pipeline_run, synthetic_runtime, validation)
     _write_json(summary_path, summary)
 
-    files = (summary_path,) + project_package.files + pipeline_run.files
+    files = (summary_path,) + project_package.files + pipeline_run.files + synthetic_runtime.files
     return CloudJobResult(
         output_dir=root,
         project_package=project_package,
         pipeline_run=pipeline_run,
+        synthetic_runtime=synthetic_runtime,
         project_package_validation=validation,
         summary_path=summary_path,
         files=files,
@@ -112,6 +118,7 @@ def _summary_payload(
     root: Path,
     project_package: MaterializedProjectDryRunPackage,
     pipeline_run: MaterializedPipelineRun,
+    synthetic_runtime: SyntheticRuntimeResult,
     validation: ProjectPackageValidationResult,
 ) -> dict[str, Any]:
     ready_branches = [
@@ -141,6 +148,8 @@ def _summary_payload(
         ),
         "project_package_dir": str(project_package.package_root.relative_to(root)),
         "pipeline_output_dir": str(pipeline_run.output_dir.relative_to(root)),
+        "synthetic_runtime_dir": str(synthetic_runtime.output_dir.relative_to(root)),
+        "synthetic_runtime_summary": synthetic_runtime.summary,
         "project_package_validation": validation.to_dict(),
         "project_branch_count": len(project_package.branches),
         "pipeline_branch_count": pipeline_run.report.branch_count,
@@ -155,6 +164,8 @@ def _summary_payload(
             "project-dry-run/project_status.json",
             "pipeline-run/manifest.json",
             "pipeline-run/pipeline_report.json",
+            "synthetic-runtime/manifest.json",
+            "synthetic-runtime/demo_summary.json",
         ],
     }
 

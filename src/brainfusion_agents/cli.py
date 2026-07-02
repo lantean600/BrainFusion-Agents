@@ -10,6 +10,7 @@ from .audit import audit_dataset_registry
 from .cloud_job import run_cloud_job
 from .ct_manifest import ct_manifest_template, validate_ct_manifest
 from .datasets import DatasetRegistry
+from .demo_runtime import run_synthetic_runtime_demo
 from .evidence import build_dry_run_evidence_bundle
 from .manifest import case_selection_manifest_template, validate_case_selection_manifest
 from .materialize import materialize_dry_run_evidence_bundle
@@ -32,6 +33,7 @@ from .wsi_manifest import validate_wsi_manifest, wsi_manifest_template
 DEFAULT_REGISTRY = Path("data/dataset_registry.json")
 DEFAULT_CLOUD_OUTPUT_DIR = Path("outputs/project-dry-run")
 DEFAULT_CLOUD_JOB_OUTPUT_DIR = Path("outputs/cloud-job")
+DEFAULT_SYNTHETIC_RUNTIME_OUTPUT_DIR = Path("outputs/synthetic-runtime")
 SAMPLE_MANIFESTS = {
     "pet_mr_manifest": Path("examples/manifests/adni-case-selection.sample.json"),
     "wsi_manifest": Path("examples/manifests/tcga-wsi-preprocessing.sample.json"),
@@ -199,6 +201,15 @@ def build_parser() -> argparse.ArgumentParser:
         help="Do not auto-use included examples/manifests sample files.",
     )
     cloud_job.set_defaults(func=_cloud_job)
+
+    synthetic_demo = subparsers.add_parser(
+        "synthetic-demo",
+        help="Run a no-download synthetic PET/MR, CT, and WSI runtime smoke test.",
+    )
+    synthetic_demo.add_argument("--output-dir", default=str(DEFAULT_SYNTHETIC_RUNTIME_OUTPUT_DIR))
+    synthetic_demo.add_argument("--subject-count", type=int, default=3)
+    synthetic_demo.add_argument("--seed", type=int, default=20240702)
+    synthetic_demo.set_defaults(func=_synthetic_demo)
 
     validate_project = subparsers.add_parser(
         "validate-project-package",
@@ -404,6 +415,14 @@ def _cloud_job(args: argparse.Namespace) -> dict[str, Any]:
         wsi_manifest=args.wsi_manifest or manifests["wsi_manifest"],
         ct_manifest=args.ct_manifest or manifests["ct_manifest"],
         pairing_manifest=args.pairing_manifest or manifests["pairing_manifest"],
+    ).to_dict()
+
+
+def _synthetic_demo(args: argparse.Namespace) -> dict[str, Any]:
+    return run_synthetic_runtime_demo(
+        args.output_dir,
+        subject_count=args.subject_count,
+        seed=args.seed,
     ).to_dict()
 
 

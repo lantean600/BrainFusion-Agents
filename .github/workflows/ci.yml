@@ -43,6 +43,15 @@ jobs:
           test -f test-output/ci-pipeline/pipeline_report.json
           test -f test-output/ci-pipeline/artifacts/pet-mr-fusion/pet_mr_fusion_planning.json
 
+      - name: Run synthetic runtime demo smoke test
+        run: |
+          export PYTHONPATH=src
+          python -m brainfusion_agents synthetic-demo --output-dir test-output/ci-synthetic-demo
+          test -f test-output/ci-synthetic-demo/demo_summary.json
+          test -f test-output/ci-synthetic-demo/pet_mr_fusion_demo.json
+          test -f test-output/ci-synthetic-demo/ct_preprocessing_demo.json
+          test -f test-output/ci-synthetic-demo/wsi_preprocessing_demo.json
+
       - name: Run full cloud job smoke test
         run: |
           export PYTHONPATH=src
@@ -50,6 +59,7 @@ jobs:
           test -f test-output/ci-cloud-job/job_summary.json
           test -f test-output/ci-cloud-job/project-dry-run/manifest.json
           test -f test-output/ci-cloud-job/pipeline-run/pipeline_report.json
+          test -f test-output/ci-cloud-job/synthetic-runtime/demo_summary.json
           python -m brainfusion_agents validate-project-package --package-dir test-output/ci-cloud-job/project-dry-run
 
       - name: Enforce no-download metadata boundary

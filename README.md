@@ -59,6 +59,7 @@ It provides:
 - dry-run evidence bundle generation for planned artifacts and non-claim-supporting traces;
 - local materialization of dry-run evidence packages;
 - executable preprocessing/fusion pipeline dry runs for PET/MR, WSI, CT, and CT/WSI pairing;
+- synthetic no-download runtime demo for PET/MR fusion, CT preprocessing, and WSI preprocessing calculations;
 - CT-pathology pairing gate evaluation;
 - agent trace validation for main-conclusion and extension-experiment claims;
 - project-level cloud dry-run status reporting;
@@ -83,6 +84,9 @@ brainfusion-agents cloud-job --output-dir outputs/cloud-job
 - `outputs/cloud-job/job_summary.json`
 - `outputs/cloud-job/project-dry-run/`
 - `outputs/cloud-job/pipeline-run/`
+- `outputs/cloud-job/synthetic-runtime/`
+
+The synthetic runtime directory contains computed smoke-test outputs for PET/MR fusion, CT feature extraction, and WSI tile/embedding preprocessing. It uses generated arrays only; it does not download or claim results from real medical datasets.
 
 Run the included no-download samples:
 
@@ -157,6 +161,15 @@ python -m brainfusion_agents run-pipeline --output-dir outputs/pipeline-run
 ```
 
 This writes `pipeline_report.json` plus task-level artifacts for PET/MR fusion, WSI preprocessing, CT preprocessing, and CT/WSI pairing audit.
+
+Run the synthetic no-download runtime demo:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m brainfusion_agents synthetic-demo --output-dir outputs/synthetic-runtime
+```
+
+This writes computed PET/MR, CT, and WSI smoke-test JSON files using generated data only.
 
 Validate a generated project dry-run package:
 

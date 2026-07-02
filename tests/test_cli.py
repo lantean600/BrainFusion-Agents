@@ -198,6 +198,7 @@ class CliTests(unittest.TestCase):
         self.assertEqual(summary["pipeline_branch_count"], 4)
         self.assertTrue((output_dir / "project-dry-run" / "manifest.json").exists())
         self.assertTrue((output_dir / "pipeline-run" / "pipeline_report.json").exists())
+        self.assertTrue((output_dir / "synthetic-runtime" / "demo_summary.json").exists())
 
     def test_cloud_job_command_finds_sample_manifests_outside_repo_root(self) -> None:
         cwd = PROJECT_ROOT / "test-output" / f"cloud-job-outside-repo-{uuid.uuid4().hex}"
@@ -216,6 +217,28 @@ class CliTests(unittest.TestCase):
 
         self.assertTrue(payload["cloud_runnable"])
         self.assertEqual(summary["ready_pipeline_branches"], ["pet-mr-fusion", "wsi-preprocessing", "ct-preprocessing"])
+
+    def test_synthetic_demo_command_writes_runtime_outputs(self) -> None:
+        output_dir = Path("test-output") / f"cli-synthetic-demo-{uuid.uuid4().hex}"
+
+        completed = run_cli(
+            "synthetic-demo",
+            "--output-dir",
+            str(output_dir),
+            "--subject-count",
+            "2",
+            "--seed",
+            "7",
+        )
+
+        payload = json.loads(completed.stdout)
+        summary = json.loads((output_dir / "demo_summary.json").read_text(encoding="utf-8"))
+
+        self.assertEqual(payload["output_dir"], str(output_dir))
+        self.assertTrue(payload["synthetic_data"])
+        self.assertFalse(payload["data_downloaded"])
+        self.assertEqual(summary["pet_mr_fusion_records"], 2)
+        self.assertTrue((output_dir / "pet_mr_fusion_demo.json").exists())
 
     def test_cloud_run_command_finds_sample_manifests_outside_repo_root(self) -> None:
         cwd = PROJECT_ROOT / "test-output" / f"cloud-run-outside-repo-{uuid.uuid4().hex}"

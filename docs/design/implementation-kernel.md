@@ -10,6 +10,7 @@ The implementation kernel turns the research design into testable workflow behav
 | `CloudJobResult` / `run_cloud_job` | `brainfusion_agents.cloud_job` | Run the default cloud deliverable job and write project evidence, pipeline reports, validation results, and `job_summary.json`. |
 | `ct_manifest_template` / `validate_ct_manifest` | `brainfusion_agents.ct_manifest` | Create and validate CT prototype manifests without local DICOM, CT, annotation, or feature paths. |
 | `DatasetRegistry` | `brainfusion_agents.datasets` | Load and query dataset metadata links, access status, modality, branch, and pairing status. |
+| `SyntheticRuntimeResult` / `run_synthetic_runtime_demo` | `brainfusion_agents.demo_runtime` | Run a generated-data PET/MR, CT, and WSI computation smoke test without downloading medical files. |
 | `case_selection_manifest_template` / `validate_case_selection_manifest` | `brainfusion_agents.manifest` | Create and validate PET/MR case selection manifests without local image paths. |
 | `pairing_manifest_template` / `validate_pairing_manifest` | `brainfusion_agents.pairing_manifest` | Create and validate CT-pathology pairing audit manifests, then evaluate the pairing gate. |
 | `build_pet_mr_readiness_report` | `brainfusion_agents.readiness` | Combine registry audit, PET/MR workflow plan, and case selection manifest validation into a metadata readiness report. |
@@ -330,8 +331,26 @@ The output layout is:
 - `project-dry-run/project_status.json`
 - `pipeline-run/manifest.json`
 - `pipeline-run/pipeline_report.json`
+- `synthetic-runtime/demo_summary.json`
 
-This is still a no-download job. A successful run proves that the repository can execute on cloud compute and produce collectable planning artifacts; it does not claim trained performance or paired patient-level CT/WSI fusion.
+This is still a no-download job. A successful run proves that the repository can execute on cloud compute, produce collectable planning artifacts, and run a small generated-data computation path; it does not claim trained performance or paired patient-level CT/WSI fusion.
+
+## Synthetic Runtime Demo
+
+`run_synthetic_runtime_demo` generates small in-memory arrays and computes:
+
+- PET z-score preprocessing, MR min/max preprocessing, and PET/MR fused feature summaries;
+- CT z-score preprocessing and radiomics-like high-density features;
+- WSI tile tissue filtering, artifact filtering, stain statistics, and an 8-value synthetic embedding.
+
+Example:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m brainfusion_agents synthetic-demo --output-dir outputs/synthetic-runtime
+```
+
+The outputs are useful for cloud smoke tests and artifact collection. They remain explicitly synthetic and cannot support clinical or publication claims.
 
 ## Verification
 

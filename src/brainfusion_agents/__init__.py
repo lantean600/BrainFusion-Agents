@@ -4,6 +4,7 @@ from .audit import RegistryAuditFinding, RegistryAuditResult, audit_dataset_regi
 from .cloud_job import CloudJobResult, run_cloud_job
 from .ct_manifest import ct_manifest_template, validate_ct_manifest
 from .datasets import DatasetRecord, DatasetRegistry
+from .demo_runtime import SyntheticRuntimeResult, run_synthetic_runtime_demo
 from .evidence import DryRunEvidenceBundle, build_dry_run_evidence_bundle
 from .manifest import (
     ManifestFinding,
@@ -84,6 +85,7 @@ __all__ = [
     "QCResult",
     "RegistryAuditFinding",
     "RegistryAuditResult",
+    "SyntheticRuntimeResult",
     "WorkflowPlan",
     "audit_dataset_registry",
     "build_dry_run_evidence_bundle",
@@ -100,6 +102,7 @@ __all__ = [
     "materialize_pipeline_run",
     "pairing_manifest_template",
     "run_cloud_job",
+    "run_synthetic_runtime_demo",
     "validate_case_selection_manifest",
     "validate_ct_manifest",
     "validate_pairing_manifest",
