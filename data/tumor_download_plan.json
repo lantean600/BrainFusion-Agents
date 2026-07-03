@@ -1,0 +1,81 @@
+{
+  "schema_version": "brainfusion-tumor-download-plan/v1",
+  "default_policy": "auto",
+  "datasets": [
+    {
+      "dataset_id": "medmnist-breastmnist",
+      "name": "BreastMNIST",
+      "modality_group": "US",
+      "tumor_context": "breast ultrasound malignant vs benign/normal classification",
+      "download_method": "direct-http",
+      "url": "https://zenodo.org/records/10519652/files/breastmnist.npz?download=1",
+      "filename": "breastmnist.npz",
+      "md5": "750601b1f35ba3300ea97c75c52ff8f6",
+      "estimated_size_mb": 1,
+      "default_auto_download": true,
+      "license": "CC BY 4.0",
+      "source": "MedMNIST v2 / Zenodo",
+      "notes": "Small tumor-related cloud smoke dataset."
+    },
+    {
+      "dataset_id": "medmnist-nodulemnist3d",
+      "name": "NoduleMNIST3D",
+      "modality_group": "CT",
+      "tumor_context": "lung nodule malignancy classification from LIDC-IDRI-derived CT crops",
+      "download_method": "direct-http",
+      "url": "https://zenodo.org/records/10519652/files/nodulemnist3d.npz?download=1",
+      "filename": "nodulemnist3d.npz",
+      "md5": "8755a7e9e05a4d9ce80a24c3e7a256f3",
+      "estimated_size_mb": 32,
+      "default_auto_download": true,
+      "license": "CC BY 4.0",
+      "source": "MedMNIST v2 / Zenodo",
+      "notes": "3D CT tumor smoke dataset for cloud execution."
+    },
+    {
+      "dataset_id": "medmnist-pathmnist",
+      "name": "PathMNIST",
+      "modality_group": "PATH_PATCH",
+      "tumor_context": "colorectal cancer histology patch classification",
+      "download_method": "direct-http",
+      "url": "https://zenodo.org/records/10519652/files/pathmnist.npz?download=1",
+      "filename": "pathmnist.npz",
+      "md5": "a8b06965200029087d5bd730944a56c1",
+      "estimated_size_mb": 220,
+      "default_auto_download": true,
+      "license": "CC BY 4.0",
+      "source": "MedMNIST v2 / Zenodo",
+      "notes": "Histopathology patch smoke dataset; not a whole-slide image dataset."
+    },
+    {
+      "dataset_id": "idc-tumor-cohort-manifest",
+      "name": "IDC tumor imaging cohort manifest",
+      "modality_group": "CT",
+      "tumor_context": "IDC/TCIA tumor imaging cohort selected by manifest",
+      "download_method": "external-manifest",
+      "url": "https://learn.canceridc.dev/data/downloading-data",
+      "filename": "idc-cohort-manifest.tsv",
+      "md5": null,
+      "estimated_size_mb": 0,
+      "default_auto_download": false,
+      "license": "source-specific",
+      "source": "NCI Imaging Data Commons",
+      "notes": "Use idc-index, s5cmd, DICOMweb, or cloud object storage with a user-provided IDC cohort manifest."
+    },
+    {
+      "dataset_id": "gdc-tcga-diagnostic-slides",
+      "name": "TCGA diagnostic slides via GDC",
+      "modality_group": "WSI",
+      "tumor_context": "TCGA tumor diagnostic pathology slides",
+      "download_method": "gdc-api",
+      "url": "https://api.gdc.cancer.gov/data/",
+      "filename": "gdc_manifest.txt",
+      "md5": null,
+      "estimated_size_mb": 0,
+      "default_auto_download": false,
+      "license": "GDC data-use terms",
+      "source": "NCI Genomic Data Commons",
+      "notes": "Requires a GDC file manifest; controlled-access files require an X-Auth-Token."
+    }
+  ]
+}

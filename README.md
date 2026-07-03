@@ -60,6 +60,7 @@ It provides:
 - local materialization of dry-run evidence packages;
 - executable preprocessing/fusion pipeline dry runs for PET/MR, WSI, CT, and CT/WSI pairing;
 - synthetic no-download runtime demo for PET/MR fusion, CT preprocessing, and WSI preprocessing calculations;
+- tumor-first dataset download planning and automatic public smoke-dataset download;
 - CT-pathology pairing gate evaluation;
 - agent trace validation for main-conclusion and extension-experiment claims;
 - project-level cloud dry-run status reporting;
@@ -72,21 +73,36 @@ The CLI reads `data/dataset_registry.json` when run from the repository root. If
 
 ## Cloud Runnable Dry Run
 
-The current complete runnable version is a metadata-only dry run. It can be installed on a cloud compute platform and used to validate registry rules, workflow routing, manifests, pairing gates, pipeline task planning, and planned evidence artifacts before medical data is approved.
+The current complete runnable version is a cloud-ready tumor-first smoke job. It can be installed on a cloud compute platform and used to download public tumor smoke datasets, validate registry rules, route workflows, materialize manifests, run pairing gates, generate pipeline task plans, and collect planned evidence artifacts before restricted TCIA/GDC/ADNI-style access is approved.
 
 ```bash
 python -m pip install .
 brainfusion-agents cloud-job --output-dir outputs/cloud-job
 ```
 
-`cloud-job` is the recommended cloud platform entrypoint. It writes:
+`cloud-job` is the recommended cloud platform entrypoint. By default it automatically downloads public tumor smoke datasets from the bundled tumor download plan:
+
+- `medmnist-breastmnist`: breast ultrasound tumor classification smoke data.
+- `medmnist-nodulemnist3d`: lung nodule CT malignancy smoke data.
+- `medmnist-pathmnist`: colorectal cancer histology patch smoke data.
+
+It writes:
 
 - `outputs/cloud-job/job_summary.json`
+- `outputs/cloud-job/downloads/`
 - `outputs/cloud-job/project-dry-run/`
 - `outputs/cloud-job/pipeline-run/`
 - `outputs/cloud-job/synthetic-runtime/`
 
-The synthetic runtime directory contains computed smoke-test outputs for PET/MR fusion, CT feature extraction, and WSI tile/embedding preprocessing. It uses generated arrays only; it does not download or claim results from real medical datasets.
+The synthetic runtime directory contains computed smoke-test outputs for PET/MR fusion, CT feature extraction, and WSI tile/embedding preprocessing. It uses generated arrays only; the downloaded MedMNIST tumor files are collected for cloud data availability checks and later ingestion wiring.
+
+For CI or offline checks, disable downloads explicitly:
+
+```bash
+brainfusion-agents cloud-job --output-dir outputs/cloud-job --download-policy off
+```
+
+Formal TCIA/IDC/GDC tumor cohorts remain supported through manifests, IDC tools, GDC manifests, and tokens. The project does not pretend those restricted or very large cohorts can be downloaded without the required access setup.
 
 Run the included no-download samples:
 
@@ -144,6 +160,20 @@ Run the full cloud job:
 ```powershell
 $env:PYTHONPATH='src'
 python -m brainfusion_agents cloud-job --output-dir outputs/cloud-job
+```
+
+Write the tumor download plan without network access:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m brainfusion_agents download-data --output-dir outputs/tumor-downloads --dataset-ids medmnist-breastmnist
+```
+
+Execute the public tumor smoke downloads:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m brainfusion_agents download-data --output-dir outputs/tumor-downloads --execute
 ```
 
 Write a project-level dry-run evidence package:

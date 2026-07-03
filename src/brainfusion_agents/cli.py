@@ -11,6 +11,7 @@ from .cloud_job import run_cloud_job
 from .ct_manifest import ct_manifest_template, validate_ct_manifest
 from .datasets import DatasetRegistry
 from .demo_runtime import run_synthetic_runtime_demo
+from .downloads import materialize_tumor_downloads
 from .evidence import build_dry_run_evidence_bundle
 from .manifest import case_selection_manifest_template, validate_case_selection_manifest
 from .materialize import materialize_dry_run_evidence_bundle
@@ -34,6 +35,8 @@ DEFAULT_REGISTRY = Path("data/dataset_registry.json")
 DEFAULT_CLOUD_OUTPUT_DIR = Path("outputs/project-dry-run")
 DEFAULT_CLOUD_JOB_OUTPUT_DIR = Path("outputs/cloud-job")
 DEFAULT_SYNTHETIC_RUNTIME_OUTPUT_DIR = Path("outputs/synthetic-runtime")
+DEFAULT_DOWNLOAD_OUTPUT_DIR = Path("outputs/tumor-downloads")
+DEFAULT_DOWNLOAD_PLAN = Path("data/tumor_download_plan.json")
 SAMPLE_MANIFESTS = {
     "pet_mr_manifest": Path("examples/manifests/adni-case-selection.sample.json"),
     "wsi_manifest": Path("examples/manifests/tcga-wsi-preprocessing.sample.json"),
@@ -196,6 +199,15 @@ def build_parser() -> argparse.ArgumentParser:
     cloud_job.add_argument("--ct-manifest")
     cloud_job.add_argument("--pairing-manifest")
     cloud_job.add_argument(
+        "--download-policy",
+        choices=("off", "plan", "auto"),
+        default="auto",
+        help="Tumor dataset download behavior. Default auto downloads public smoke datasets.",
+    )
+    cloud_job.add_argument("--download-plan", default=str(DEFAULT_DOWNLOAD_PLAN))
+    cloud_job.add_argument("--download-datasets", nargs="+")
+    cloud_job.add_argument("--max-download-mb", type=float, default=1024.0)
+    cloud_job.add_argument(
         "--no-sample-manifests",
         action="store_true",
         help="Do not auto-use included examples/manifests sample files.",
@@ -210,6 +222,21 @@ def build_parser() -> argparse.ArgumentParser:
     synthetic_demo.add_argument("--subject-count", type=int, default=3)
     synthetic_demo.add_argument("--seed", type=int, default=20240702)
     synthetic_demo.set_defaults(func=_synthetic_demo)
+
+    download_data = subparsers.add_parser(
+        "download-data",
+        help="Materialize or execute the tumor-first dataset download plan.",
+    )
+    download_data.add_argument("--plan", default=str(DEFAULT_DOWNLOAD_PLAN))
+    download_data.add_argument("--output-dir", default=str(DEFAULT_DOWNLOAD_OUTPUT_DIR))
+    download_data.add_argument("--dataset-ids", nargs="+")
+    download_data.add_argument("--max-download-mb", type=float, default=1024.0)
+    download_data.add_argument(
+        "--execute",
+        action="store_true",
+        help="Actually download direct public datasets. Without this flag only writes a plan.",
+    )
+    download_data.set_defaults(func=_download_data)
 
     validate_project = subparsers.add_parser(
         "validate-project-package",
@@ -415,6 +442,10 @@ def _cloud_job(args: argparse.Namespace) -> dict[str, Any]:
         wsi_manifest=args.wsi_manifest or manifests["wsi_manifest"],
         ct_manifest=args.ct_manifest or manifests["ct_manifest"],
         pairing_manifest=args.pairing_manifest or manifests["pairing_manifest"],
+        download_policy=args.download_policy,
+        download_dataset_ids=args.download_datasets,
+        download_plan=_resolve_download_plan(args.download_plan),
+        max_download_mb=args.max_download_mb,
     ).to_dict()
 
 
@@ -423,6 +454,16 @@ def _synthetic_demo(args: argparse.Namespace) -> dict[str, Any]:
         args.output_dir,
         subject_count=args.subject_count,
         seed=args.seed,
+    ).to_dict()
+
+
+def _download_data(args: argparse.Namespace) -> dict[str, Any]:
+    return materialize_tumor_downloads(
+        args.output_dir,
+        plan_path=_resolve_download_plan(args.plan),
+        dataset_ids=args.dataset_ids,
+        execute=args.execute,
+        max_download_mb=args.max_download_mb,
     ).to_dict()
 
 
@@ -462,6 +503,17 @@ def _resolve_sample_manifest(path: Path) -> str | None:
     if packaged_path.exists():
         return str(packaged_path)
     return None
+
+
+def _resolve_download_plan(path: str | None) -> str | None:
+    if not path:
+        return None
+    plan_path = Path(path)
+    if plan_path.exists():
+        return str(plan_path)
+    if path == str(DEFAULT_DOWNLOAD_PLAN):
+        return None
+    return path
 
 
 def _route(args: argparse.Namespace) -> dict[str, Any]:

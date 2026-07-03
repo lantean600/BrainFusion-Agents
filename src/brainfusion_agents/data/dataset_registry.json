@@ -38,6 +38,48 @@
       "notes": "Use only for open BIDS/MRI workflow checks unless a specific PET/MR paired dataset is audited."
     },
     {
+      "dataset_id": "medmnist-breastmnist",
+      "name": "BreastMNIST",
+      "modalities": ["US"],
+      "branch": "tumor-download-smoke",
+      "role": "cloud-auto-download",
+      "access_status": "indexed",
+      "source_urls": [
+        "https://medmnist.com/",
+        "https://zenodo.org/records/10519652"
+      ],
+      "pairing_status": "benchmark-only",
+      "notes": "Default auto-download tumor smoke dataset: breast ultrasound malignant vs benign/normal classification."
+    },
+    {
+      "dataset_id": "medmnist-nodulemnist3d",
+      "name": "NoduleMNIST3D",
+      "modalities": ["CT"],
+      "branch": "tumor-download-smoke",
+      "role": "cloud-auto-download",
+      "access_status": "indexed",
+      "source_urls": [
+        "https://medmnist.com/",
+        "https://zenodo.org/records/10519652"
+      ],
+      "pairing_status": "ct-only",
+      "notes": "Default auto-download tumor smoke dataset: 3D lung nodule malignancy CT crops derived from LIDC-IDRI."
+    },
+    {
+      "dataset_id": "medmnist-pathmnist",
+      "name": "PathMNIST",
+      "modalities": ["WSI_PATCH"],
+      "branch": "tumor-download-smoke",
+      "role": "cloud-auto-download",
+      "access_status": "indexed",
+      "source_urls": [
+        "https://medmnist.com/",
+        "https://zenodo.org/records/10519652"
+      ],
+      "pairing_status": "benchmark-only",
+      "notes": "Default auto-download tumor smoke dataset: colorectal cancer histology patches, not whole-slide images."
+    },
+    {
       "dataset_id": "lidc-idri",
       "name": "LIDC-IDRI",
       "modalities": ["CT"],
@@ -83,6 +125,28 @@
       "source_urls": ["https://portal.gdc.cancer.gov/"],
       "pairing_status": "wsi-branch-pairing-audit-required",
       "notes": "Large-scale WSI preprocessing and pathology foundation model feature extraction source."
+    },
+    {
+      "dataset_id": "tcga-luad-gdc-wsi",
+      "name": "TCGA-LUAD diagnostic slides via GDC",
+      "modalities": ["WSI"],
+      "branch": "wsi-preprocessing",
+      "role": "lung-cancer-wsi-expansion",
+      "access_status": "not-requested",
+      "source_urls": ["https://portal.gdc.cancer.gov/"],
+      "pairing_status": "wsi-branch-pairing-audit-required",
+      "notes": "Tumor-focused WSI candidate for lung adenocarcinoma; automatic download requires GDC file manifest and token when controlled files are selected."
+    },
+    {
+      "dataset_id": "tcga-brca-gdc-wsi",
+      "name": "TCGA-BRCA diagnostic slides via GDC",
+      "modalities": ["WSI"],
+      "branch": "wsi-preprocessing",
+      "role": "breast-cancer-wsi-expansion",
+      "access_status": "not-requested",
+      "source_urls": ["https://portal.gdc.cancer.gov/"],
+      "pairing_status": "wsi-branch-pairing-audit-required",
+      "notes": "Tumor-focused WSI candidate for breast cancer; automatic download requires GDC file manifest and token when controlled files are selected."
     },
     {
       "dataset_id": "camelyon",
@@ -133,6 +197,20 @@
       ],
       "pairing_status": "unverified",
       "notes": "Candidate only. Formal fusion requires patient-level or lesion-level pairing evidence."
+    },
+    {
+      "dataset_id": "idc-tumor-cohort-candidates",
+      "name": "IDC tumor imaging cohort candidates",
+      "modalities": ["CT", "PET", "MR"],
+      "branch": "tumor-imaging-expansion",
+      "role": "cancer-imaging-cloud-download",
+      "access_status": "indexed",
+      "source_urls": [
+        "https://portal.imaging.datacommons.cancer.gov/",
+        "https://learn.canceridc.dev/data/downloading-data"
+      ],
+      "pairing_status": "candidate-pairing-review",
+      "notes": "Tumor imaging cloud source. Use IDC cohort selection plus idc-index, s5cmd, DICOMweb, or cloud object storage downloads."
     }
   ]
 }

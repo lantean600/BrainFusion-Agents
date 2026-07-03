@@ -10,6 +10,7 @@ The implementation kernel turns the research design into testable workflow behav
 | `CloudJobResult` / `run_cloud_job` | `brainfusion_agents.cloud_job` | Run the default cloud deliverable job and write project evidence, pipeline reports, validation results, and `job_summary.json`. |
 | `ct_manifest_template` / `validate_ct_manifest` | `brainfusion_agents.ct_manifest` | Create and validate CT prototype manifests without local DICOM, CT, annotation, or feature paths. |
 | `DatasetRegistry` | `brainfusion_agents.datasets` | Load and query dataset metadata links, access status, modality, branch, and pairing status. |
+| `DownloadRunResult` / `materialize_tumor_downloads` | `brainfusion_agents.downloads` | Plan or execute tumor-first public dataset downloads with MD5 verification and cloud artifact summaries. |
 | `SyntheticRuntimeResult` / `run_synthetic_runtime_demo` | `brainfusion_agents.demo_runtime` | Run a generated-data PET/MR, CT, and WSI computation smoke test without downloading medical files. |
 | `case_selection_manifest_template` / `validate_case_selection_manifest` | `brainfusion_agents.manifest` | Create and validate PET/MR case selection manifests without local image paths. |
 | `pairing_manifest_template` / `validate_pairing_manifest` | `brainfusion_agents.pairing_manifest` | Create and validate CT-pathology pairing audit manifests, then evaluate the pairing gate. |
@@ -315,7 +316,7 @@ The pipeline remains metadata-only: it uses registry links and manifests, writes
 
 ## Cloud Job
 
-`run_cloud_job` is the cloud platform entrypoint for the current deliverable. It runs both project materialization and pipeline materialization, validates the project package, and writes a root `job_summary.json`.
+`run_cloud_job` is the cloud platform entrypoint for the current deliverable. It can automatically download public tumor smoke datasets, runs both project materialization and pipeline materialization, validates the project package, and writes a root `job_summary.json`.
 
 Example:
 
@@ -324,16 +325,35 @@ $env:PYTHONPATH='src'
 python -m brainfusion_agents cloud-job --output-dir outputs/cloud-job
 ```
 
+Default download policy is `auto`. Use `--download-policy off` for CI/offline checks or `--download-policy plan` to materialize the download plan only.
+
 The output layout is:
 
 - `job_summary.json`
+- `downloads/download_summary.json`
 - `project-dry-run/manifest.json`
 - `project-dry-run/project_status.json`
 - `pipeline-run/manifest.json`
 - `pipeline-run/pipeline_report.json`
 - `synthetic-runtime/demo_summary.json`
 
-This is still a no-download job. A successful run proves that the repository can execute on cloud compute, produce collectable planning artifacts, and run a small generated-data computation path; it does not claim trained performance or paired patient-level CT/WSI fusion.
+The default public downloads are tumor-first MedMNIST smoke datasets: BreastMNIST, NoduleMNIST3D, and PathMNIST. A successful run proves that the repository can execute on cloud compute, download public tumor smoke data, produce collectable planning artifacts, and run a small generated-data computation path; it does not claim trained performance or paired patient-level CT/WSI fusion.
+
+## Tumor Downloads
+
+`materialize_tumor_downloads` reads `data/tumor_download_plan.json` and supports two execution levels:
+
+- plan-only: write `download_manifest.json` and `download_summary.json` without network access;
+- execute: download direct public datasets, reuse existing verified files, and verify MD5 hashes.
+
+Example:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m brainfusion_agents download-data --output-dir outputs/tumor-downloads --execute
+```
+
+Formal IDC, TCIA, and GDC tumor cohorts remain manifest/token gated. They are represented in the plan as external-manifest/API targets rather than unconditional default downloads.
 
 ## Synthetic Runtime Demo
 

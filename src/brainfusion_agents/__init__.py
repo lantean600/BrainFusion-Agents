@@ -5,6 +5,13 @@ from .cloud_job import CloudJobResult, run_cloud_job
 from .ct_manifest import ct_manifest_template, validate_ct_manifest
 from .datasets import DatasetRecord, DatasetRegistry
 from .demo_runtime import SyntheticRuntimeResult, run_synthetic_runtime_demo
+from .downloads import (
+    DatasetDownloadResult,
+    DownloadDatasetSpec,
+    DownloadRunResult,
+    load_download_specs,
+    materialize_tumor_downloads,
+)
 from .evidence import DryRunEvidenceBundle, build_dry_run_evidence_bundle
 from .manifest import (
     ManifestFinding,
@@ -61,6 +68,9 @@ __all__ = [
     "ConclusionSupport",
     "DatasetRecord",
     "DatasetRegistry",
+    "DatasetDownloadResult",
+    "DownloadDatasetSpec",
+    "DownloadRunResult",
     "DryRunEvidenceBundle",
     "EvidenceBundle",
     "FailureState",
@@ -100,9 +110,11 @@ __all__ = [
     "materialize_dry_run_evidence_bundle",
     "materialize_project_dry_run",
     "materialize_pipeline_run",
+    "materialize_tumor_downloads",
     "pairing_manifest_template",
     "run_cloud_job",
     "run_synthetic_runtime_demo",
+    "load_download_specs",
     "validate_case_selection_manifest",
     "validate_ct_manifest",
     "validate_pairing_manifest",

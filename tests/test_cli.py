@@ -186,6 +186,8 @@ class CliTests(unittest.TestCase):
             "cloud-job",
             "--output-dir",
             str(output_dir),
+            "--download-policy",
+            "off",
         )
 
         payload = json.loads(completed.stdout)
@@ -209,6 +211,8 @@ class CliTests(unittest.TestCase):
             "cloud-job",
             "--output-dir",
             str(output_dir),
+            "--download-policy",
+            "off",
             cwd=cwd,
         )
 
@@ -217,6 +221,25 @@ class CliTests(unittest.TestCase):
 
         self.assertTrue(payload["cloud_runnable"])
         self.assertEqual(summary["ready_pipeline_branches"], ["pet-mr-fusion", "wsi-preprocessing", "ct-preprocessing"])
+
+    def test_download_data_command_writes_tumor_plan_without_network(self) -> None:
+        output_dir = Path("test-output") / f"cli-download-plan-{uuid.uuid4().hex}"
+
+        completed = run_cli(
+            "download-data",
+            "--output-dir",
+            str(output_dir),
+            "--dataset-ids",
+            "medmnist-breastmnist",
+        )
+
+        payload = json.loads(completed.stdout)
+        summary = json.loads((output_dir / "download_summary.json").read_text(encoding="utf-8"))
+
+        self.assertFalse(payload["data_downloaded"])
+        self.assertEqual(summary["selected_dataset_ids"], ["medmnist-breastmnist"])
+        self.assertEqual(summary["planned_count"], 1)
+        self.assertTrue((output_dir / "download_manifest.json").exists())
 
     def test_synthetic_demo_command_writes_runtime_outputs(self) -> None:
         output_dir = Path("test-output") / f"cli-synthetic-demo-{uuid.uuid4().hex}"

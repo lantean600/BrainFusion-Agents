@@ -1,6 +1,6 @@
 # Cloud Run Guide
 
-This project is currently a metadata-only dry-run kernel. It is suitable for a cloud compute platform before dataset access is approved because it does not download ADNI, OASIS-3, TCIA, GDC, CAMELYON, PANDA, or IGNITE files.
+This project is now a cloud-ready tumor-first smoke job plus metadata workflow kernel. It can automatically download public tumor smoke datasets and still keeps restricted TCIA, IDC, GDC, ADNI, OASIS-3, CAMELYON, PANDA, and IGNITE data behind explicit manifests, credentials, or platform tools.
 
 ## Runtime
 
@@ -20,9 +20,16 @@ When launched from the repository root, the CLI reads `data/dataset_registry.jso
 The command should report:
 
 - `cloud_runnable=true`
-- `dry_run_only=true`
-- `data_downloaded=false`
+- `data_downloaded=true` when the public tumor smoke downloads succeed
 - a `job_summary.json` path plus project and pipeline output directories
+
+By default, `cloud-job` runs with `--download-policy auto` and downloads:
+
+- BreastMNIST
+- NoduleMNIST3D
+- PathMNIST
+
+Use `--download-policy off` for CI/offline smoke checks, or `--download-policy plan` to write the tumor download plan without fetching files.
 
 ## Run With Included No-Download Samples
 
@@ -49,6 +56,7 @@ python -m brainfusion_agents cloud-job --output-dir outputs/cloud-job
 `cloud-job` automatically uses the included sample manifests when `examples/manifests/` exists. It writes:
 
 - `outputs/cloud-job/job_summary.json`
+- `outputs/cloud-job/downloads/download_summary.json`
 - `outputs/cloud-job/project-dry-run/manifest.json`
 - `outputs/cloud-job/project-dry-run/project_status.json`
 - `outputs/cloud-job/pipeline-run/manifest.json`
@@ -58,6 +66,24 @@ python -m brainfusion_agents cloud-job --output-dir outputs/cloud-job
 Use this as the default command on AutoDL, RunPod, Lambda Labs, Slurm jobs, or a plain cloud VM. Pass `--no-sample-manifests` to generate the same package shape with manifest blockers instead.
 
 The `synthetic-runtime/` directory is a real computation smoke test over generated arrays. It writes PET/MR fusion features, CT preprocessing features, and WSI tile/embedding features without downloading or inspecting real medical files.
+
+The `downloads/` directory contains public tumor smoke datasets when `--download-policy auto` is used. Full TCIA/IDC/GDC tumor cohorts should be added through user-supplied manifests or platform-specific tools:
+
+- IDC: use cohort manifests with `idc-index`, `s5cmd`, DICOMweb, or cloud object storage.
+- GDC: use GDC manifests and the GDC API/data transfer workflow; controlled files require a token.
+- TCIA: use TCIA/NBIA collection manifests or API/Data Retriever workflows.
+
+To write the tumor download plan without network:
+
+```bash
+python -m brainfusion_agents download-data --output-dir outputs/tumor-downloads --dataset-ids medmnist-breastmnist
+```
+
+To execute the public tumor smoke downloads directly:
+
+```bash
+python -m brainfusion_agents download-data --output-dir outputs/tumor-downloads --execute
+```
 
 To create only the project dry-run package:
 

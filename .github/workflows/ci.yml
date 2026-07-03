@@ -52,10 +52,17 @@ jobs:
           test -f test-output/ci-synthetic-demo/ct_preprocessing_demo.json
           test -f test-output/ci-synthetic-demo/wsi_preprocessing_demo.json
 
+      - name: Materialize tumor download plan without network
+        run: |
+          export PYTHONPATH=src
+          python -m brainfusion_agents download-data --output-dir test-output/ci-download-plan --dataset-ids medmnist-breastmnist
+          test -f test-output/ci-download-plan/download_manifest.json
+          test -f test-output/ci-download-plan/download_summary.json
+
       - name: Run full cloud job smoke test
         run: |
           export PYTHONPATH=src
-          python -m brainfusion_agents cloud-job --output-dir test-output/ci-cloud-job
+          python -m brainfusion_agents cloud-job --output-dir test-output/ci-cloud-job --download-policy off
           test -f test-output/ci-cloud-job/job_summary.json
           test -f test-output/ci-cloud-job/project-dry-run/manifest.json
           test -f test-output/ci-cloud-job/pipeline-run/pipeline_report.json
@@ -74,7 +81,9 @@ jobs:
           )
           paths = [
               Path("data/dataset_registry.json"),
+              Path("data/tumor_download_plan.json"),
               Path("src/brainfusion_agents/data/dataset_registry.json"),
+              Path("src/brainfusion_agents/data/tumor_download_plan.json"),
           ]
           for path in paths:
               text = path.read_text(encoding="utf-8")
